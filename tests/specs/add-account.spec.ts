@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../support/test-fixtures';
 
 test('creates a savings account with an opening balance', async ({ app }) => {
   const initialPage = app.initialPage();

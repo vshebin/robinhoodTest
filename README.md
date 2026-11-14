@@ -1,8 +1,8 @@
 # Actual UI automation
 
 This project contains Playwright end-to-end tests for Actual onboarding,
-account creation, and expense creation/editing. Browser interactions are
-organized into page objects under `tests/pages`.
+account creation, and expense creation/editing. Tests, page objects, factories,
+interfaces, locators, and fixtures are separated under `tests/` by responsibility.
 
 ## Prerequisites
 
@@ -44,10 +44,13 @@ browser projects:
 }
 ```
 
-Page-object construction is centralized in the `PageFactory` fixture, and
-selectors are maintained in the per-page `AppLocators` catalog. Add new page
-objects through the factory and add or update selectors in that catalog rather
-than duplicating locator definitions across tests.
+Page-object construction is centralized in the `ActualPageFactory`, which
+implements the separate `PageFactory` interface. Actual page objects live in
+`tests/pages/actual`, and Actual-specific selectors live in
+`tests/locators/actual-app-locators.ts`. Add page objects through the factory
+and add or update selectors in that catalog rather than duplicating locator
+definitions across tests. The interface and factory are separate so another
+platform implementation can be added without mixing it into the current one.
 
 To run with a visible browser:
 

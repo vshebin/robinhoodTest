@@ -1,9 +1,16 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../support/test-fixtures';
 import type { Page } from '@playwright/test';
 
-import type { AccountPage, ExpenseDetails } from './pages/account-page';
-import type { BudgetPage } from './pages/budget-page';
-import type { PageFactory } from './pages/page-factory';
+import type {
+  AccountPage,
+  ExpenseDetails,
+} from '../pages/actual/account-page';
+import type { BudgetPage } from '../pages/actual/budget-page';
+import type { PageFactory } from '../interfaces/page-factory.interface';
+import {
+  ACTUAL_TEST_IDS,
+  ACTUAL_UI_ROLES,
+} from '../locators/actual-app-locators';
 
 const accountName = 'Expense Test Account';
 
@@ -82,24 +89,42 @@ async function verifyTransaction(
   const matches = accountPage.matchingTransactions(details.payee);
   await expect(matches).toHaveCount(1);
   const row = matches.first();
-  await expect(accountPage.locators.transactionCell(row, 'date')).toHaveText(
-    details.date,
-  );
-  await expect(accountPage.locators.transactionCell(row, 'payee')).toHaveText(
-    details.payee,
-  );
-  await expect(accountPage.locators.transactionCell(row, 'notes')).toHaveText(
-    details.notes,
-  );
-  await expect(accountPage.locators.transactionCell(row, 'category')).toHaveText(
-    details.category,
-  );
-  await expect(accountPage.locators.transactionCell(row, 'debit')).toHaveText(
-    amount,
-  );
-  await expect(accountPage.locators.transactionCell(row, 'credit')).toHaveText(
-    '',
-  );
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.date,
+    ),
+  ).toHaveText(details.date);
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.payee,
+    ),
+  ).toHaveText(details.payee);
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.notes,
+    ),
+  ).toHaveText(details.notes);
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.category,
+    ),
+  ).toHaveText(details.category);
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.debit,
+    ),
+  ).toHaveText(amount);
+  await expect(
+    accountPage.locators.transactionCell(
+      row,
+      ACTUAL_TEST_IDS.transactionColumn.credit,
+    ),
+  ).toHaveText('');
 }
 
 async function verifyBudgetValues(
@@ -125,25 +150,37 @@ test('TC-01 creates and persists a 25.00 expense', async ({ page, app }) => {
 
   await accountPage.beginExpense(expenseDetails);
   await expect(
-    accountPage.locators.transactionCell(accountPage.newTransactionRow, 'date'),
+    accountPage.locators.transactionCell(
+      accountPage.newTransactionRow,
+      ACTUAL_TEST_IDS.transactionColumn.date,
+    ),
   ).toHaveText(expenseDetails.date);
   await expect(
-    accountPage.locators.transactionCell(accountPage.newTransactionRow, 'payee'),
+    accountPage.locators.transactionCell(
+      accountPage.newTransactionRow,
+      ACTUAL_TEST_IDS.transactionColumn.payee,
+    ),
   ).toContainText(expenseDetails.payee);
   await expect(
-    accountPage.locators.transactionCell(accountPage.newTransactionRow, 'notes'),
+    accountPage.locators.transactionCell(
+      accountPage.newTransactionRow,
+      ACTUAL_TEST_IDS.transactionColumn.notes,
+    ),
   ).toContainText(expenseDetails.notes);
   await expect(
     accountPage.locators.transactionInput(
       accountPage.locators.transactionCell(
         accountPage.newTransactionRow,
-        'category',
+        ACTUAL_TEST_IDS.transactionColumn.category,
       ),
-      'textbox',
+      ACTUAL_UI_ROLES.textbox,
     ),
   ).toHaveValue(expenseDetails.category);
   await expect(
-    accountPage.locators.transactionCell(accountPage.newTransactionRow, 'debit'),
+    accountPage.locators.transactionCell(
+      accountPage.newTransactionRow,
+      ACTUAL_TEST_IDS.transactionColumn.debit,
+    ),
   ).toHaveAttribute('title', '25.00');
 
   await accountPage.saveExpense(expenseDetails.payee);
