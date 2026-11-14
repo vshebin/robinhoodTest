@@ -3,6 +3,7 @@
 This project contains Playwright end-to-end tests for Actual onboarding,
 account creation, and expense creation/editing. Tests, page objects, factories,
 interfaces, locators, and fixtures are separated under `tests/` by responsibility.
+Executable test scenarios live in `tests/test-cases/`.
 
 ## Prerequisites
 
@@ -28,21 +29,9 @@ npm test
 ```
 
 The same tests run in Chromium and Microsoft Edge, configured as Playwright
-projects in `playwright.config.ts`. Add a project that spreads a Playwright
-device descriptor into `use` when you are ready to cover a mobile device; the
-test files and page objects do not need browser-specific changes. Playwright
-runs test files in parallel across browser projects, while tests within each
-file run sequentially to avoid conflicts in the shared app.
-
-For example, a Chromium-based mobile project can be added alongside the current
-browser projects:
-
-```ts
-{
-  name: 'pixel-7',
-  use: { ...devices['Pixel 7'], browserName: 'chromium' },
-}
-```
+projects in `playwright.config.ts`. Playwright runs test files in parallel
+across browser projects, while tests within each file run sequentially to avoid
+conflicts in the shared app.
 
 Page-object construction is centralized in the `ActualPageFactory`, which
 implements the separate `PageFactory` interface. Actual page objects live in
@@ -54,6 +43,25 @@ locators. Update the relevant constants module when the UI changes, and keep
 locator construction in the locator class rather than duplicating it in tests.
 The interface and factory are separate so another platform implementation can
 be added without mixing it into the current one.
+
+## Future platform onboarding
+
+The current framework targets the Actual web app in Chromium and Edge. No
+Android platform support is implemented. To onboard a future platform:
+
+1. Add platform-specific page objects and locator definitions in their own
+   directories, keeping selectors and UI-specific constants separate.
+2. Before using the current `PageFactory` for another platform, extract
+   platform-neutral page contracts: it currently returns Actual-specific page
+   objects and locators. Update shared test flows to depend on those contracts,
+   then implement a factory for the new platform.
+3. Configure the platform's Playwright project or provider-specific setup.
+   Keep platform-specific setup out of the existing Actual web factory.
+4. Add or adapt test cases where the platform supports the same user flows,
+   then run them alongside the existing web projects.
+
+This keeps test cases dependent on the factory contract rather than a
+platform's concrete page classes, making future onboarding more maintainable.
 
 To run with a visible browser:
 

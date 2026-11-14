@@ -12,6 +12,10 @@ import { ACTUAL_UI_ROLES } from '../constants/actual-ui.constants';
 
 const accountName = 'Expense Test Account';
 
+/**
+ * Gets the current month and date in formats used by the budget and transaction UI.
+ * @returns Current month as YYYY-MM and date as MM/DD/YYYY.
+ */
 function currentMonthAndDate(): { month: string; date: string } {
   const now = new Date();
   const monthNumber = String(now.getMonth() + 1).padStart(2, '0');
@@ -24,6 +28,13 @@ function currentMonthAndDate(): { month: string; date: string } {
   };
 }
 
+/**
+ * Initializes a fresh account and category for an expense test.
+ * @param page Playwright page used by the current test.
+ * @param app Factory for page objects and shared Actual locators.
+ * @param categoryName Unique category name for this test.
+ * @returns The account and budget page objects plus expense data for the test.
+ */
 async function prepareExpenseFixture(
   page: Page,
   app: PageFactory,
@@ -79,6 +90,12 @@ async function prepareExpenseFixture(
   return { accountPage, budgetPage, expenseDate: date, expenseDetails };
 }
 
+/**
+ * Verifies that a single transaction matches the expected expense details.
+ * @param accountPage Account page containing the transaction.
+ * @param details Expected date, payee, notes, category, and amount.
+ * @param amount Expected debit amount, defaulting to the amount in details.
+ */
 async function verifyTransaction(
   accountPage: AccountPage,
   details: ExpenseDetails,
@@ -125,6 +142,13 @@ async function verifyTransaction(
   ).toHaveText('');
 }
 
+/**
+ * Checks allocation, spent, and remaining values for a budget category.
+ * @param budgetPage Budget page containing the category.
+ * @param categoryName Category whose budget values are checked.
+ * @param spent Expected spent amount.
+ * @param remaining Expected remaining amount.
+ */
 async function verifyBudgetValues(
   budgetPage: BudgetPage,
   categoryName: string,
@@ -136,6 +160,9 @@ async function verifyBudgetValues(
   await expect(budgetPage.remaining(categoryName)).toHaveText(remaining);
 }
 
+/**
+ * Verifies that an expense is created, reflected in the budget, and persists after reload.
+ */
 test('TC-01 creates and persists a 25.00 expense', async ({ page, app }) => {
   const categoryName = 'TC-01 Expense Category';
   const { accountPage, budgetPage, expenseDetails } =
@@ -204,6 +231,9 @@ test('TC-01 creates and persists a 25.00 expense', async ({ page, app }) => {
   await verifyBudgetValues(budgetPage, categoryName, '-25.00', '75.00');
 });
 
+/**
+ * Verifies that editing an expense updates its transaction, account balance, and budget totals.
+ */
 test('TC-02 edits an independent 25.00 expense to 40.00', async ({
   page,
   app,
