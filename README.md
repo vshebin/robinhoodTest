@@ -46,11 +46,14 @@ browser projects:
 
 Page-object construction is centralized in the `ActualPageFactory`, which
 implements the separate `PageFactory` interface. Actual page objects live in
-`tests/pages/actual`, and Actual-specific selectors live in
-`tests/locators/actual-app-locators.ts`. Add page objects through the factory
-and add or update selectors in that catalog rather than duplicating locator
-definitions across tests. The interface and factory are separate so another
-platform implementation can be added without mixing it into the current one.
+`tests/pages/actual`. Actual UI text, roles, routes, and interaction values are
+in `tests/constants/actual-ui.constants.ts`; test IDs and CSS selectors are in
+`tests/constants/actual-selectors.constants.ts`. The locator class in
+`tests/locators/actual-app-locators.ts` composes those constants into Playwright
+locators. Update the relevant constants module when the UI changes, and keep
+locator construction in the locator class rather than duplicating it in tests.
+The interface and factory are separate so another platform implementation can
+be added without mixing it into the current one.
 
 To run with a visible browser:
 

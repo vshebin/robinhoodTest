@@ -1,84 +1,15 @@
 import type { Locator, Page } from '@playwright/test';
 
-export const ACTUAL_UI_ROLES = {
-  button: 'button',
-  link: 'link',
-  textbox: 'textbox',
-  combobox: 'combobox',
-} as const;
-
-export const ACTUAL_UI_TEXT = {
-  noServerButton: "Don't use a server",
-  startBudgetingButton: 'Start budgeting',
-  addNewButton: 'Add New',
-  cancelButton: 'Cancel',
-  budgetLink: 'Budget',
-  addAccountButton: 'Add account',
-  accountNameLabel: 'Name:',
-  accountBalanceLabel: 'Balance:',
-  createButton: 'Create',
-  addCategoryButton: 'Add category',
-  usualExpenses: 'Usual Expenses',
-} as const;
-
-export const ACTUAL_TEST_IDS = {
-  accountName: 'account-name',
-  accountBalance: 'account-balance',
-  transactionTable: 'transaction-table',
-  row: 'row',
-  newTransaction: 'new-transaction',
-  addTransactionButton: 'add-button',
-  categoryItemSuffix: '-category-item',
-  onBudgetBalance: 'sidebar-on-budget-balance',
-  budgetTable: 'budget-table',
-  selectedBudgetMonth: 'selected-budget-month',
-  budget: 'budget',
-  categorySpent: 'category-month-spent',
-  balance: 'balance',
-  transactionColumn: {
-    date: 'date',
-    debit: 'debit',
-    payee: 'payee',
-    notes: 'notes',
-    category: 'category',
-    credit: 'credit',
-  },
-} as const;
-
-export const ACTUAL_PLACEHOLDERS = {
-  newCategoryName: 'New category name',
-} as const;
-
-export const ACTUAL_CSS_SELECTORS = {
-  input: 'input',
-} as const;
-
-export const ACTUAL_ATTRIBUTES = {
-  selectedBudgetMonth: 'data-month',
-} as const;
-
-export const ACTUAL_ROUTES = {
-  home: '/',
-} as const;
-
-export const ACTUAL_KEYBOARD_KEYS = {
-  enter: 'Enter',
-  tab: 'Tab',
-} as const;
-
-export const ACTUAL_LOCATOR_STATES = {
-  visible: 'visible',
-} as const;
-
-export const ACTUAL_ERROR_MESSAGES = {
-  saveTransactionCount:
-    'Saving the expense did not add exactly one transaction.',
-  selectedBudgetMonthUnavailable:
-    'The selected budget month is not available.',
-} as const;
-
-const ACCOUNT_LINK_START = '^';
-const REGEX_ESCAPE_REPLACEMENT = '\\$&';
+import {
+  ACTUAL_CSS_SELECTORS,
+  ACTUAL_LOCATOR_PATTERNS,
+  ACTUAL_TEST_IDS,
+} from '../constants/actual-selectors.constants';
+import {
+  ACTUAL_PLACEHOLDERS,
+  ACTUAL_UI_ROLES,
+  ACTUAL_UI_TEXT,
+} from '../constants/actual-ui.constants';
 
 /**
  * Provides the centralized Playwright selectors for Actual's web interface.
@@ -206,10 +137,12 @@ export class ActualAppLocators {
   accountLink(name: string): Locator {
     const escapedName = name.replace(
       /[.*+?^${}()|[\]\\]/g,
-      REGEX_ESCAPE_REPLACEMENT,
+      ACTUAL_LOCATOR_PATTERNS.regexEscapeReplacement,
     );
     return this.page.getByRole(ACTUAL_UI_ROLES.link, {
-      name: new RegExp(`${ACCOUNT_LINK_START}${escapedName}`),
+      name: new RegExp(
+        `${ACTUAL_LOCATOR_PATTERNS.accountLinkStart}${escapedName}`,
+      ),
     });
   }
 

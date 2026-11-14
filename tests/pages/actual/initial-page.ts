@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import type { ActualAppLocators } from '../../locators/actual-app-locators';
-import { ACTUAL_ROUTES } from '../../locators/actual-app-locators';
+import { ACTUAL_ROUTES } from '../../constants/actual-ui.constants';
 import { CommonPage } from './common-page';
 
 /**

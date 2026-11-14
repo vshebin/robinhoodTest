@@ -7,10 +7,8 @@ import type {
 } from '../pages/actual/account-page';
 import type { BudgetPage } from '../pages/actual/budget-page';
 import type { PageFactory } from '../interfaces/page-factory.interface';
-import {
-  ACTUAL_TEST_IDS,
-  ACTUAL_UI_ROLES,
-} from '../locators/actual-app-locators';
+import { ACTUAL_TEST_IDS } from '../constants/actual-selectors.constants';
+import { ACTUAL_UI_ROLES } from '../constants/actual-ui.constants';
 
 const accountName = 'Expense Test Account';
 

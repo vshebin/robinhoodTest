@@ -1,12 +1,14 @@
 import type { Locator, Page } from '@playwright/test';
 
 import {
+  type ActualAppLocators,
+} from '../../locators/actual-app-locators';
+import {
   ACTUAL_ATTRIBUTES,
   ACTUAL_ERROR_MESSAGES,
   ACTUAL_KEYBOARD_KEYS,
   ACTUAL_LOCATOR_STATES,
-  type ActualAppLocators,
-} from '../../locators/actual-app-locators';
+} from '../../constants/actual-ui.constants';
 import { CommonPage } from './common-page';
 
 /**
