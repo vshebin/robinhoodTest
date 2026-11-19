@@ -31,7 +31,10 @@ npm test
 The same tests run in Chromium and Microsoft Edge, configured as Playwright
 projects in `playwright.config.ts`. Playwright runs test files in parallel
 across browser projects, while tests within each file run sequentially to avoid
-conflicts in the shared app.
+conflicts in the shared app. Test runs generate a table at
+`playwright-report/index.html`; the full Playwright HTML report, including
+detailed test output and attachments, is available at
+`playwright-report/details/index.html`.
 
 Page-object construction is centralized in the `ActualPageFactory`, which
 implements the separate `PageFactory` interface. Actual page objects live in
@@ -43,6 +46,74 @@ locators. Update the relevant constants module when the UI changes, and keep
 locator construction in the locator class rather than duplicating it in tests.
 The interface and factory are separate so another platform implementation can
 be added without mixing it into the current one.
+
+## Running specific tests
+
+Run the full suite in all configured browser projects:
+
+```powershell
+npx playwright test
+```
+
+Run every test in the expense spec in Chromium:
+
+```powershell
+npx playwright test tests/test-cases/expenses.spec.ts --project=chromium
+```
+
+Run only TC-01 in Chromium:
+
+```powershell
+npx playwright test -g "TC-01" --project=chromium
+```
+
+Add `--headed` to see the browser while a test runs:
+
+```powershell
+npx playwright test -g "TC-01" --project=chromium --headed
+```
+
+The current test title begins with `TC-01` (without a colon), so use
+`-g "TC-01"` rather than `-g "TC-01:"`. The expense spec is named
+`expenses.spec.ts` (plural). A file-and-line selector can run a test at that
+location; for example, the current TC-01 location is:
+
+```powershell
+npx playwright test tests/test-cases/expenses.spec.ts:166 --project=chromium
+```
+
+Run the tests that failed in the previous run:
+
+```powershell
+npx playwright test --last-failed --headed
+```
+
+The configured retry count is one retry after the initial attempt. Override it
+for a run with `--retries`; use `0` to disable retries or another number to
+change the retry count:
+
+```powershell
+npx playwright test --project=chromium --retries=2
+```
+
+Choose a browser project with `--project=chromium` or `--project=edge`. To pass
+the project through a PowerShell environment variable:
+
+```powershell
+$env:PW_PROJECT = "chromium"
+npx playwright test --project=$env:PW_PROJECT
+```
+
+Set the browser context locale with `ACTUAL_LOCALE`. It defaults to `en-US`:
+
+```powershell
+$env:ACTUAL_LOCALE = "en-GB"
+npx playwright test --project=chromium
+```
+
+The expense tests currently expect dates in `MM/DD/YYYY` format, so those date
+assertions may need localization when running with a locale that formats dates
+differently.
 
 ## Future platform onboarding
 
@@ -83,7 +154,9 @@ npm run test:ci
 ```
 
 Configure the CI job to preserve `playwright-report/` and `test-results/` as
-artifacts, including when a test fails. The pipeline must make the Actual app
+artifacts, including when a test fails. The table report is the
+`playwright-report/index.html` entry point, with the full Playwright report
+linked from it. The pipeline must make the Actual app
 available at `ACTUAL_BASE_URL` (defaults to `http://localhost:3001`).
 
 Each test uses a fresh Playwright browser context and budget. The expense tests
